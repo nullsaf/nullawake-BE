@@ -1,0 +1,13 @@
+package com.nullsaf.nullawake;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class NullawakeApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(NullawakeApplication.class, args);
+	}
+
+}
