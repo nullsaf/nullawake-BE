@@ -12,14 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout shared config repository
+      - name: Checkout shared .github repository
         uses: actions/checkout@v4
         with:
           repository: nullsaf/.github
           path: shared-config
 
       - name: Sync labels
-        uses: EndBug/label-sync@v2
+        uses: micnncim/action-label-syncer@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          config-file: shared-config/labels.yml
-          delete-other-labels: false
+          manifest: shared-config/labels.yml
+          delete-other-labels: true
