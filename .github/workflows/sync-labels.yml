@@ -1,0 +1,25 @@
+name: Sync Labels
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout shared config repository
+        uses: actions/checkout@v4
+        with:
+          repository: nullsaf/.github
+          path: shared-config
+
+      - name: Sync labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: shared-config/labels.yml
+          delete-other-labels: false
