@@ -122,16 +122,14 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        OAuthAccount oauthAccount = oauthAccountRepository.findAll()
-                .stream()
-                .filter(account -> refreshTokenEncoder.matches(
-                        refreshToken,
-                        account.getRefreshTokenHash()
-                ))
-                .findFirst()
+        Long userId = jwtTokenProvider.getUserId(refreshToken);
+
+        OAuthAccount oauthAccount = oauthAccountRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        Long userId = oauthAccount.getUser().getUserId();
+        if (!refreshTokenEncoder.matches(refreshToken, oauthAccount.getRefreshTokenHash())) {
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
 
         String newAccessToken = jwtTokenProvider.createAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(userId);
