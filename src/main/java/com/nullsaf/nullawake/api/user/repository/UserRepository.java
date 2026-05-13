@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.auth.repository;
+package com.nullsaf.nullawake.api.user.repository;
 
 import com.nullsaf.nullawake.api.user.dto.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
