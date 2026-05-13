@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.auth.entity;
+package com.nullsaf.nullawake.api.user.dto;
 
 import jakarta.persistence.*;
 import lombok.*;

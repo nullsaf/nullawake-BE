@@ -4,7 +4,7 @@ import com.nullsaf.nullawake.api.auth.dto.AuthLoginResponse;
 import com.nullsaf.nullawake.api.auth.dto.TokenRefreshResponse;
 import com.nullsaf.nullawake.api.auth.entity.OAuthAccount;
 import com.nullsaf.nullawake.api.auth.entity.OAuthProvider;
-import com.nullsaf.nullawake.api.auth.entity.Users;
+import com.nullsaf.nullawake.api.user.dto.Users;
 import com.nullsaf.nullawake.api.auth.repository.OAuthAccountRepository;
 import com.nullsaf.nullawake.api.auth.repository.UserRepository;
 import com.nullsaf.nullawake.common.exception.CustomException;
