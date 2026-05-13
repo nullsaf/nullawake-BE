@@ -6,7 +6,7 @@ import com.nullsaf.nullawake.api.auth.entity.OAuthAccount;
 import com.nullsaf.nullawake.api.auth.entity.OAuthProvider;
 import com.nullsaf.nullawake.api.user.dto.Users;
 import com.nullsaf.nullawake.api.auth.repository.OAuthAccountRepository;
-import com.nullsaf.nullawake.api.auth.repository.UserRepository;
+import com.nullsaf.nullawake.api.user.repository.UserRepository;
 import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -141,5 +141,29 @@ public class AuthService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
+    }
+
+    @Transactional
+    public void logout(String authorizationHeader) {
+        String token = extractBearerToken(authorizationHeader);
+
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
+        Long userId = jwtTokenProvider.getUserId(token);
+
+        OAuthAccount oauthAccount = oauthAccountRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        oauthAccount.updateRefreshTokenHash(null);
+    }
+
+    private String extractBearerToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
+        return authorizationHeader.substring(7);
     }
 }
