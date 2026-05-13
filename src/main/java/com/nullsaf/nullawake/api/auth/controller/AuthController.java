@@ -2,6 +2,7 @@ package com.nullsaf.nullawake.api.auth.controller;
 
 import com.nullsaf.nullawake.api.auth.dto.*;
 import com.nullsaf.nullawake.api.auth.service.AuthService;
+import com.nullsaf.nullawake.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;

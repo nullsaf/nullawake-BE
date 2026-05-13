@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.auth.dto;
+package com.nullsaf.nullawake.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
