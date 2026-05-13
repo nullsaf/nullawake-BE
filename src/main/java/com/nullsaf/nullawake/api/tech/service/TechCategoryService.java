@@ -28,6 +28,9 @@ public class TechCategoryService {
         List<TechCategoryResponse.TechCategory> techCategoryList =
             techCategoryRepository.findActiveCategoriesWithStackCount();
 
+        log.info("[TechCategoryService] 활성 기술 카테고리 목록 조회 완료 - categoryCount={}",
+            techCategoryList.size());
+
         return new TechCategoryResponse(techCategoryList);
     }
 }

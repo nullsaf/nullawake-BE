@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TechCategoryController {
 
     private final TechCategoryService techCategoryService;
-    
+
     @GetMapping
     @Operation(
         summary = "기술 카테고리 목록 조회",
