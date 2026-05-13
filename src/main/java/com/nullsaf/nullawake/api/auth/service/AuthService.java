@@ -144,26 +144,10 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String authorizationHeader) {
-        String token = extractBearerToken(authorizationHeader);
-
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }
-
-        Long userId = jwtTokenProvider.getUserId(token);
-
+    public void logout(Long userId) {
         OAuthAccount oauthAccount = oauthAccountRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         oauthAccount.updateRefreshTokenHash(null);
-    }
-
-    private String extractBearerToken(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }
-
-        return authorizationHeader.substring(7);
     }
 }
