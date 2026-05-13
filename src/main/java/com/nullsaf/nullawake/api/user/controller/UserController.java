@@ -13,6 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 유저 관련 API를 제공하는 Controller.
+ *
+ * 로그인한 사용자의 정보 조회, 수정, 탈퇴 기능을 제공한다.
+ */
 @RequestMapping("/api/users")
 @RestController
 @RequiredArgsConstructor
