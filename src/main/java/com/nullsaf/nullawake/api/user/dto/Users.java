@@ -41,4 +41,18 @@ public class Users {
                 .profileImage(profileImage)
                 .build();
     }
+
+    public void updateProfile(String nickname, String email) {
+        if (nickname != null && !nickname.isBlank()) {
+            this.nickname = nickname;
+        }
+
+        if (email != null && !email.isBlank()) {
+            this.email = email;
+        }
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
