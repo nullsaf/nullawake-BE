@@ -1,5 +1,6 @@
 package com.nullsaf.nullawake.api.user.dto;
 
+import com.nullsaf.nullawake.api.user.entity.Users;
 import lombok.Builder;
 import lombok.Getter;
 

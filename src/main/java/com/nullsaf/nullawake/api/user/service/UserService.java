@@ -3,7 +3,7 @@ package com.nullsaf.nullawake.api.user.service;
 import com.nullsaf.nullawake.api.auth.service.JwtTokenProvider;
 import com.nullsaf.nullawake.api.user.dto.UserInfoResponse;
 import com.nullsaf.nullawake.api.user.dto.UserUpdateRequest;
-import com.nullsaf.nullawake.api.user.dto.Users;
+import com.nullsaf.nullawake.api.user.entity.Users;
 import com.nullsaf.nullawake.api.user.repository.UserRepository;
 import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
