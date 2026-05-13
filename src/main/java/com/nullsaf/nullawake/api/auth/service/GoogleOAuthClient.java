@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import java.time.Duration;
 
 @Component
@@ -44,23 +46,29 @@ public class GoogleOAuthClient implements OAuthClient {
     }
 
     private String getAccessToken(String code) {
-        GoogleTokenResponse response = webClient.post()
-                .uri("https://oauth2.googleapis.com/token")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(BodyInserters.fromFormData("grant_type", "authorization_code")
-                        .with("client_id", clientId)
-                        .with("client_secret", clientSecret)
-                        .with("redirect_uri", redirectUri)
-                        .with("code", code))
-                .retrieve()
-                .bodyToMono(GoogleTokenResponse.class)
-                .block(Duration.ofSeconds(5));
+        try {
+            GoogleTokenResponse response = webClient.post()
+                    .uri("https://oauth2.googleapis.com/token")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(BodyInserters.fromFormData("grant_type", "authorization_code")
+                            .with("client_id", clientId)
+                            .with("client_secret", clientSecret)
+                            .with("redirect_uri", redirectUri)
+                            .with("code", code))
+                    .retrieve()
+                    .bodyToMono(GoogleTokenResponse.class)
+                    .block(Duration.ofSeconds(5));
 
-        if (response == null || response.accessToken == null) {
+            if (response == null || response.getAccessToken() == null) {
+                throw new CustomException(ErrorCode.INVALID_SOCIAL_CODE);
+            }
+
+            return response.getAccessToken();
+
+        } catch (WebClientResponseException e) {
+            System.out.println("Google OAuth Error: " + e.getResponseBodyAsString());
             throw new CustomException(ErrorCode.INVALID_SOCIAL_CODE);
         }
-
-        return response.accessToken;
     }
 
     private SocialUserInfo getUserInfoByAccessToken(String accessToken) {
