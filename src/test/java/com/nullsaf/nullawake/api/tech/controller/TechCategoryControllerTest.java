@@ -3,6 +3,8 @@ package com.nullsaf.nullawake.api.tech.controller;
 import com.nullsaf.nullawake.api.auth.service.JwtTokenProvider;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse;
 import com.nullsaf.nullawake.api.tech.service.TechCategoryService;
+import com.nullsaf.nullawake.common.exception.CustomException;
+import com.nullsaf.nullawake.common.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -87,6 +89,25 @@ class TechCategoryControllerTest {
                 .value("Frontend"))
             .andExpect(jsonPath("$.data.techCategoryList[1].stackCount")
                 .value(2));
+
+        verify(techCategoryService, times(1))
+            .getTechCategories();
+    }
+
+    @Test
+    @DisplayName("기술 카테고리 조회 실패 시 500 응답을 반환한다")
+    void getTechCategories_queryFailed() throws Exception {
+        // given
+        given(techCategoryService.getTechCategories())
+            .willThrow(new CustomException(ErrorCode.TECH_CATEGORY_QUERY_FAILED));
+
+        // when & then
+        mockMvc.perform(get("/api/tech-categories"))
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.success").value(false))
+            .andExpect(jsonPath("$.message")
+                .value(ErrorCode.TECH_CATEGORY_QUERY_FAILED.getMessage()))
+            .andExpect(jsonPath("$.data").doesNotExist());
 
         verify(techCategoryService, times(1))
             .getTechCategories();

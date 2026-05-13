@@ -2,6 +2,8 @@ package com.nullsaf.nullawake.api.tech.service;
 
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse;
 import com.nullsaf.nullawake.api.tech.repository.TechCategoryRepository;
+import com.nullsaf.nullawake.common.exception.CustomException;
+import com.nullsaf.nullawake.common.exception.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +27,18 @@ public class TechCategoryService {
      */
     @Transactional(readOnly = true)
     public TechCategoryResponse getTechCategories() {
-        List<TechCategoryResponse.TechCategory> techCategoryList =
-            techCategoryRepository.findActiveCategoriesWithStackCount();
+        try {
 
-        log.info("[TechCategoryService] 활성 기술 카테고리 목록 조회 완료 - categoryCount={}",
-            techCategoryList.size());
+            List<TechCategoryResponse.TechCategory> techCategoryList =
+                techCategoryRepository.findActiveCategoriesWithStackCount();
 
-        return new TechCategoryResponse(techCategoryList);
+            log.info("[TechCategoryService] 활성 기술 카테고리 목록 조회 완료 - categoryCount={}",
+                techCategoryList.size());
+
+            return new TechCategoryResponse(techCategoryList);
+        } catch (Exception e) {
+            log.error("[TechCategoryService] 기술 카테고리 조회 중 예외 발생", e);
+            throw new CustomException(ErrorCode.TECH_CATEGORY_QUERY_FAILED);
+        }
     }
 }
