@@ -9,11 +9,11 @@ import java.util.List;
 @AllArgsConstructor
 public class TechCategoryResponse {
 
-    private List<TechCategory> techCategoryList;
+    private List<TechCategoryDto> techCategoryDtoList;
 
     @Getter
     @AllArgsConstructor
-    public static class TechCategory {
+    public static class TechCategoryDto {
 
         private Long techCategoryId;
         private String techCategoryName;

@@ -1,13 +1,17 @@
 package com.nullsaf.nullawake.api.tech.controller;
 
+import com.nullsaf.nullawake.api.auth.security.CustomUserDetails;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse;
+import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
 import com.nullsaf.nullawake.api.tech.service.TechCategoryService;
 import com.nullsaf.nullawake.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +40,26 @@ public class TechCategoryController {
         return ResponseEntity.ok(
             ApiResponse.success(
                 "기술 카테고리 목록 조회에 성공했습니다.",
+                response
+            )
+        );
+    }
+
+    @GetMapping("/{techCategoryId}/tech-stacks")
+    @Operation(
+        summary = "카테고리별 기술 스택 목록 조회",
+        description = "Path Variable로 전달된 categoryId와 연관된 활성 기술 스택 목록을 조회합니다."
+    )
+    public ResponseEntity<ApiResponse<TechStackListResponse>> getTechStacksByCategory(
+        @PathVariable Long techCategoryId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        TechStackListResponse response =
+            techCategoryService.getTechStacksByCategory(userDetails.getUserId(), techCategoryId);
+
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                "기술 스택 목록 조회에 성공했습니다.",
                 response
             )
         );
