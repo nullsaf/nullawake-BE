@@ -21,7 +21,7 @@ public class UserService {
 
     public UserInfoResponse getMyInfo(String authorizationHeader) {
         Long userId = getUserIdFromHeader(authorizationHeader);
-        Users user = getUser(userId);
+        Users user = getActiveUser(userId);
 
         return UserInfoResponse.from(user);
     }
@@ -32,7 +32,7 @@ public class UserService {
             UserUpdateRequest request
     ) {
         Long userId = getUserIdFromHeader(authorizationHeader);
-        Users user = getUser(userId);
+        Users user = getActiveUser(userId);
 
         user.updateProfile(request.getNickname(), request.getEmail());
 
@@ -42,13 +42,13 @@ public class UserService {
     @Transactional
     public void deleteMyInfo(String authorizationHeader) {
         Long userId = getUserIdFromHeader(authorizationHeader);
-        Users user = getUser(userId);
+        Users user = getActiveUser(userId);
 
         user.delete();
     }
 
-    private Users getUser(Long userId) {
-        return userRepository.findById(userId)
+    private Users getActiveUser(Long userId) {
+        return userRepository.findByUserIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
