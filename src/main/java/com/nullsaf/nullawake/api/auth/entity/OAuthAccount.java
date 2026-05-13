@@ -1,5 +1,6 @@
 package com.nullsaf.nullawake.api.auth.entity;
 
+import com.nullsaf.nullawake.api.user.entity.Users;
 import jakarta.persistence.*;
 import lombok.*;
 

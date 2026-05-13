@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Builder
@@ -14,7 +13,7 @@ public class ApiResponse<T> {
 
     private int code;
     private String message;
-    private String responseAt;
+    private LocalDateTime respondedAt;
     private T data;
     private boolean success;
 
@@ -22,7 +21,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(200)
                 .message(message)
-                .responseAt(now())
+                .respondedAt(LocalDateTime.now())
                 .data(data)
                 .success(true)
                 .build();
@@ -32,13 +31,8 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(code)
                 .message(message)
-                .responseAt(now())
+                .respondedAt(LocalDateTime.now())
                 .success(false)
                 .build();
-    }
-
-    private static String now() {
-        return LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }

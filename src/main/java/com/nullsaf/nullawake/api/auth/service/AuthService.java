@@ -4,9 +4,9 @@ import com.nullsaf.nullawake.api.auth.dto.AuthLoginResponse;
 import com.nullsaf.nullawake.api.auth.dto.TokenRefreshResponse;
 import com.nullsaf.nullawake.api.auth.entity.OAuthAccount;
 import com.nullsaf.nullawake.api.auth.entity.OAuthProvider;
-import com.nullsaf.nullawake.api.auth.entity.Users;
+import com.nullsaf.nullawake.api.user.entity.Users;
 import com.nullsaf.nullawake.api.auth.repository.OAuthAccountRepository;
-import com.nullsaf.nullawake.api.auth.repository.UserRepository;
+import com.nullsaf.nullawake.api.user.repository.UserRepository;
 import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * OAuth 로그인 및 JWT 인증 관련 비즈니스 로직을 처리하는 서비스.
+ *
+ * 소셜 로그인, 회원가입, 토큰 재발급, 로그아웃 기능을 제공한다.
+ */
 
 @Service
 @Transactional(readOnly = true)
@@ -45,11 +51,22 @@ public class AuthService {
         }
     }
 
+    /**
+     * 카카오 소셜 로그인을 수행
+     * @param code 인가 코드를 포함한 로그인 요청 수행
+     * @return 로그인 결과 및 JWT 정보
+     */
     @Transactional
     public AuthLoginResponse kakaoLogin(String code) {
         return socialLogin(OAuthProvider.KAKAO, code);
     }
 
+    /**
+     * 구글 소셜 로그인을 수행한다.
+     *
+     * @param code OAuth 인가 코드
+     * @return 로그인 결과 및 JWT 정보
+     */
     @Transactional
     public AuthLoginResponse googleLogin(String code) {
         return socialLogin(OAuthProvider.GOOGLE, code);
@@ -66,6 +83,16 @@ public class AuthService {
         return loginOrSignUp(provider, userInfo);
     }
 
+    /**
+     * OAuth 로그인 또는 회원가입을 수행한다.
+     *
+     * 기존 회원이면 로그인 처리,
+     * 존재하지 않으면 회원가입 후 로그인 처리한다.
+     *
+     * @param provider OAuth 제공자
+     * @param userInfo 소셜 사용자 정보
+     * @return 로그인 결과 및 JWT 정보
+     */
     private AuthLoginResponse loginOrSignUp(
             OAuthProvider provider,
             SocialUserInfo userInfo
@@ -91,6 +118,13 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * 신규 사용자 및 OAuth 계정을 생성한다.
+     *
+     * @param provider OAuth 제공자
+     * @param userInfo 소셜 사용자 정보
+     * @return 생성된 OAuth 계정 정보
+     */
     private OAuthAccount createUserAndOAuthAccount(
             OAuthProvider provider,
             SocialUserInfo userInfo
@@ -116,6 +150,12 @@ public class AuthService {
         return oauthAccountRepository.save(oauthAccount);
     }
 
+    /**
+     * Refresh Token을 검증하고 새로운 JWT를 재발급한다.
+     *
+     * @param refreshToken Refresh Token
+     * @return 새롭게 발급된 JWT 정보
+     */
     @Transactional
     public TokenRefreshResponse refresh(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
@@ -141,5 +181,18 @@ public class AuthService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
+    }
+
+    /**
+     * 로그아웃을 수행하고 저장된 Refresh Token을 제거한다.
+     *
+     * @param userId 사용자 ID
+     */
+    @Transactional
+    public void logout(Long userId) {
+        OAuthAccount oauthAccount = oauthAccountRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        oauthAccount.updateRefreshTokenHash(null);
     }
 }

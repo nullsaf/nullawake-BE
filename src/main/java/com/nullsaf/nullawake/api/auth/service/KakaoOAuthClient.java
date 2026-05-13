@@ -11,7 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+/**
+ * Kakao OAuth 인증 및 사용자 정보 조회를 담당하는 클래스.
+ */
 @Component
 @RequiredArgsConstructor
 public class KakaoOAuthClient implements OAuthClient {
@@ -40,22 +44,28 @@ public class KakaoOAuthClient implements OAuthClient {
     }
 
     private String getAccessToken(String code) {
-        KakaoTokenResponse response = webClient.post()
-                .uri("https://kauth.kakao.com/oauth/token")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(BodyInserters.fromFormData("grant_type", "authorization_code")
-                        .with("client_id", clientId)
-                        .with("redirect_uri", redirectUri)
-                        .with("code", code))
-                .retrieve()
-                .bodyToMono(KakaoTokenResponse.class)
-                .block();
+        try {
+            KakaoTokenResponse response = webClient.post()
+                    .uri("https://kauth.kakao.com/oauth/token")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(BodyInserters.fromFormData("grant_type", "authorization_code")
+                            .with("client_id", clientId)
+                            .with("redirect_uri", redirectUri)
+                            .with("code", code))
+                    .retrieve()
+                    .bodyToMono(KakaoTokenResponse.class)
+                    .block();
 
-        if (response == null || response.accessToken == null) {
+            if (response == null || response.getAccessToken() == null) {
+                throw new CustomException(ErrorCode.INVALID_SOCIAL_CODE);
+            }
+
+            return response.getAccessToken();
+
+        } catch (WebClientResponseException e) {
+            System.out.println("Kakao OAuth Error: " + e.getResponseBodyAsString());
             throw new CustomException(ErrorCode.INVALID_SOCIAL_CODE);
         }
-
-        return response.accessToken;
     }
 
     private SocialUserInfo getUserInfoByAccessToken(String accessToken) {
