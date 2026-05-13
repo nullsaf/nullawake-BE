@@ -3,6 +3,8 @@ package com.nullsaf.nullawake.api.auth.controller;
 import com.nullsaf.nullawake.api.auth.dto.*;
 import com.nullsaf.nullawake.api.auth.service.AuthService;
 import com.nullsaf.nullawake.common.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "OAuth", description = "소셜 로그인 관련 API")
 public class AuthController {
 
     private final AuthService authService;
@@ -21,6 +24,7 @@ public class AuthController {
      * @return JWT 토큰 및 사용자 정보
      */
     @PostMapping("/kakao/login")
+    @Operation(summary = "카카오 로그인 ", description= "카카오 계정으로 소셜로그인을 합니다.")
     public ResponseEntity<ApiResponse<AuthLoginResponse>> kakaoLogin(
             @Valid @RequestBody SocialLoginRequest request
     ) {
@@ -37,6 +41,7 @@ public class AuthController {
      * @return JWT 토큰 및 사용자 정보
      */
     @PostMapping("/google/login")
+    @Operation(summary = "구글 로그인 ", description= "구글 계정으로 소셜로그인을 합니다.")
     public ResponseEntity<ApiResponse<AuthLoginResponse>> googleLogin(
             @Valid @RequestBody SocialLoginRequest request
     ) {
@@ -53,6 +58,7 @@ public class AuthController {
      * @return 새롭게 발급된 JWT 토큰 정보
      */
     @PostMapping("/refresh")
+    @Operation(summary = "리프레시 토큰 재발급 ", description= "리프레시 토큰을 재발급합니다.")
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> refresh(
             @Valid @RequestBody RefreshTokenRequest request
     ) {
