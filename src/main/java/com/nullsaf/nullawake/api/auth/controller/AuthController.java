@@ -4,6 +4,7 @@ import com.nullsaf.nullawake.api.auth.dto.*;
 import com.nullsaf.nullawake.api.auth.service.AuthService;
 import com.nullsaf.nullawake.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -71,13 +72,16 @@ public class AuthController {
 
 
     /**
+     *현재 로그인된 사용자의 로그아웃을 처리합니다.
+     * AccessToken을 추출하여 로그아웃을 수행하고, Refresh Token을 삭제합니다.
      *
      * @param authorizationHeader
-     * @return
+     * @return 로그아웃 성공 응답
      */
     @PostMapping("/logout")
     @Operation(summary = "로그아웃", description= "사용자가 로그아웃을 합니다.")
     public ResponseEntity<ApiResponse<Void>> logout(
+            @Parameter(hidden = true)
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         authService.logout(authorizationHeader);
