@@ -68,4 +68,22 @@ public class AuthController {
                 ApiResponse.success("토큰 재발급에 성공했습니다.", response)
         );
     }
+
+
+    /**
+     *
+     * @param authorizationHeader
+     * @return
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description= "사용자가 로그아웃을 합니다.")
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        authService.logout(authorizationHeader);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("로그아웃에 성공했습니다.", null)
+        );
+    }
 }
