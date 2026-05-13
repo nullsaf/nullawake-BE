@@ -9,6 +9,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security 설정 클래스.
+ *
+ * JWT 기반 인증을 사용하며, 세션을 생성하지 않는 Stateless 구조로 동작한다.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -29,7 +34,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                "/api/auth/**"
+                                "/api/auth/kakao/login",
+                                "/api/auth/google/login",
+                                "/api/auth/refresh"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

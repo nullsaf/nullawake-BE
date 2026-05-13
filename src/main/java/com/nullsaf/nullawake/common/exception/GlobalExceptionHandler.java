@@ -6,6 +6,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 애플리케이션 전역 예외 처리를 담당하는 Handler.
+ *
+ * CustomException과 Validation 예외를 공통 응답 형식으로 변환한다.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
