@@ -14,7 +14,7 @@ public class ApiResponse<T> {
 
     private int code;
     private String message;
-    private String responseAt;
+    private String respondedAt;
     private T data;
     private boolean success;
 
@@ -22,7 +22,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(200)
                 .message(message)
-                .responseAt(now())
+                .respondedAt(now())
                 .data(data)
                 .success(true)
                 .build();
@@ -32,7 +32,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(code)
                 .message(message)
-                .responseAt(now())
+                .respondedAt(now())
                 .success(false)
                 .build();
     }
