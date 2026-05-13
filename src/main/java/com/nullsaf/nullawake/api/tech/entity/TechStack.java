@@ -26,9 +26,10 @@ import lombok.NoArgsConstructor;
 public class TechStack {
 
     @Id
+    @Column(name = "tech_stack_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "기술 스택 ID", example = "1")
-    private Long id;
+    private Long techStackId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tech_category_id", nullable = false)
