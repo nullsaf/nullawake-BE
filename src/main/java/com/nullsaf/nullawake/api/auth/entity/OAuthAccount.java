@@ -25,14 +25,14 @@ public class OAuthAccount {
     private Long oauthId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "provider")
+    @Column(name = "provider", nullable = false)
     private OAuthProvider provider;
 
-    @Column(name = "provider_user_id")
+    @Column(name = "provider_user_id", nullable = false)
     private String providerUserId;
 
     @Column(name = "refresh_token")
