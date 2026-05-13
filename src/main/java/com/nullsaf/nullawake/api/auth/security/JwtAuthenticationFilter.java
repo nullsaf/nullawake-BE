@@ -14,12 +14,24 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * JWT 인증을 처리하는 Spring Security Filter
+ *
+ * Authorization Header의 Bearer Token을 검증하고, 인증된 사용자 정보를 SecurityContext에 저장
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * 요청 헤더의 JWT를 검증하고 인증 정보를 SecurityContext에 등록한다.
+     *
+     * @param request HTTP 요청 객체
+     * @param response HTTP 응답 객체
+     * @param filterChain 다음 필터 체인
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -47,6 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Authorization Header에서 Bearer Token을 추출한다.
+     *
+     * @param request HTTP 요청 객체
+     * @return JWT 토큰, 존재하지 않으면 null
+     */
     private String resolveToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
 

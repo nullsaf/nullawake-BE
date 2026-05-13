@@ -13,6 +13,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+/**
+ * Kakao OAuth 인증 및 사용자 정보 조회를 담당하는 클래스.
+ */
 @Component
 @RequiredArgsConstructor
 public class KakaoOAuthClient implements OAuthClient {

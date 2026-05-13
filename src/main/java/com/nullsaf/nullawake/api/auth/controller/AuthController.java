@@ -12,6 +12,11 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * OAuth 기반 인증 API를 제공하는 Controller.
+ *
+ * 소셜 로그인, 토큰 재발급, 로그아웃 기능을 제공한다.
+ */
 @RequestMapping("/api/auth")
 @RestController
 @RequiredArgsConstructor

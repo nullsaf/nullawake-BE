@@ -15,6 +15,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.time.Duration;
 
+/**
+ * Google OAuth 인증 및 사용자 정보 조회를 담당하는 클래스.
+ */
 @Component
 @RequiredArgsConstructor
 public class GoogleOAuthClient implements OAuthClient {
