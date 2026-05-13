@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -53,7 +54,7 @@ public class GoogleOAuthClient implements OAuthClient {
                         .with("code", code))
                 .retrieve()
                 .bodyToMono(GoogleTokenResponse.class)
-                .block();
+                .block(Duration.ofSeconds(5));
 
         if (response == null || response.accessToken == null) {
             throw new CustomException(ErrorCode.INVALID_SOCIAL_CODE);
@@ -68,7 +69,7 @@ public class GoogleOAuthClient implements OAuthClient {
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
                 .bodyToMono(GoogleUserResponse.class)
-                .block();
+                .block(Duration.ofSeconds(5));
 
         if (response == null || response.sub == null) {
             throw new CustomException(ErrorCode.OAUTH_USER_INFO_FAILED);
