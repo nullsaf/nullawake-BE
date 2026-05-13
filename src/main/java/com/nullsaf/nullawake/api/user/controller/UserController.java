@@ -5,6 +5,7 @@ import com.nullsaf.nullawake.api.user.dto.UserUpdateRequest;
 import com.nullsaf.nullawake.api.user.service.UserService;
 import com.nullsaf.nullawake.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class UserController {
     @GetMapping("/me")
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 유저의 정보를 조회합니다")
     public ResponseEntity<ApiResponse<UserInfoResponse>> getMyInfo(
+            @Parameter(hidden = true)
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         UserInfoResponse response = userService.getMyInfo(authorizationHeader);
@@ -34,6 +36,7 @@ public class UserController {
     @PatchMapping("/me")
     @Operation(summary = "내 정보 수정", description = "현재 로그인한 유저의 정보를 수정합니다")
     public ResponseEntity<ApiResponse<UserInfoResponse>> updateMyInfo(
+            @Parameter(hidden = true)
             @RequestHeader("Authorization") String authorizationHeader,
             @Valid @RequestBody UserUpdateRequest request
     ) {
@@ -47,6 +50,7 @@ public class UserController {
     @DeleteMapping("/me")
     @Operation(summary = "계정 탈퇴", description = "현재 로그인한 계정을 삭제합니다")
     public ResponseEntity<ApiResponse<Void>> deleteMyInfo(
+            @Parameter(hidden = true)
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         userService.deleteMyInfo(authorizationHeader);
