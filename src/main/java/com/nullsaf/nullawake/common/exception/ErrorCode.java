@@ -17,7 +17,13 @@ public enum ErrorCode {
     // TECH CATEGORY
     TECH_CATEGORY_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 카테고리 조회 중 오류가 발생했습니다."),
     TECH_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 기술 카테고리입니다."),
-    TECH_STACK_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 목록 조회 중 오류가 발생했습니다.");
+
+    // TECH_STACK
+    TECH_STACK_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 목록 조회 중 오류가 발생했습니다."),
+    TECH_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않거나 해당 카테고리에 속하지 않는 기술 스택이 포함되어 있습니다."),
+    TECH_STACK_SELECTION_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 선택 정보 저장 중 오류가 발생했습니다."),
+    TECH_STACK_SELECTION_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 선택 정보 수정 중 오류가 발생했습니다."),
+    TECH_STACK_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "선택된 기술 스택 정보가 비어있습니다.");
 
 
     private final HttpStatus status;

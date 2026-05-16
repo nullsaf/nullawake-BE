@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.tech.repository;
+package com.nullsaf.nullawake.api.tech.repository.techcategory;
 
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
@@ -25,6 +25,10 @@ public class TechCategoryRepositoryImpl implements TechCategoryRepositoryCustom 
     private final QTechStack techStack = QTechStack.techStack;
     private final QUserTechStack userTechStack = QUserTechStack.userTechStack;
 
+    /**
+     * 활성화된 카테고리 조회
+     * @return TechCategoryDto
+     */
     @Override
     public List<TechCategoryDto> findActiveCategoriesWithStackCount() {
 
@@ -47,6 +51,12 @@ public class TechCategoryRepositoryImpl implements TechCategoryRepositoryCustom 
             .fetch();
     }
 
+    /**
+     * 카테고리 스택 조회
+     * @param techCategoryId 카테고리 ID
+     * @param userId 사용자 ID
+     * @return TechStackListResponse
+     */
     @Override
     public Optional<TechStackListResponse> findTechStacksByCategoryIdAndUserId(
         Long techCategoryId,

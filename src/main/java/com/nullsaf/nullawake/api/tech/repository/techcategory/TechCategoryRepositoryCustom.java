@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.tech.repository;
+package com.nullsaf.nullawake.api.tech.repository.techcategory;
 
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;

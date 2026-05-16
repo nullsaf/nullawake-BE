@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class UserTechStack {
 
     @Id
@@ -42,6 +45,7 @@ public class UserTechStack {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Schema(description = "생성 일시")
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Builder
@@ -67,5 +71,13 @@ public class UserTechStack {
      */
     public boolean isSelected() {
         return Boolean.TRUE.equals(this.selected);
+    }
+
+    /**
+     * 선택 상태 변경
+     * @param selected
+     */
+    public void updateSelected(boolean selected) {
+        this.selected = selected;
     }
 }
