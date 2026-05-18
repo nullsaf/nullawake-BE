@@ -43,7 +43,7 @@ public class Alarm {
 
     @Column(name = "day_of_week", nullable = false)
     @Schema(description = "알람 요일", example = "MONDAY")
-    private String dayOfWeek;
+    private String dayOfWeeks;
 
     @Column(name = "alarm_time", nullable = false)
     @Schema(description = "알람 시간", example = "08:00:00")
