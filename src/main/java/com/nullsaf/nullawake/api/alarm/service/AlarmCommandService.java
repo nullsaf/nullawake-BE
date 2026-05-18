@@ -26,6 +26,12 @@ public class AlarmCommandService {
     private final EntityManager entityManager;
     private final UserTechStackRepository userTechStackRepository;
 
+    /**
+     * 유저의 알람을 생성하는 메서드
+     * @param userId
+     * @param request
+     * @return
+     */
     public Long createAlarm(Long userId, AlarmRequest request) {
         validateAlarmRequest(request);
         validateUserSelectedStacks(userId, request.techStackIds());
@@ -46,6 +52,12 @@ public class AlarmCommandService {
         return alarmGroupId;
     }
 
+    /** 유저의 알람을 수정하는 메서드
+     *
+     * @param userId
+     * @param alarmGroupId
+     * @param request
+     */
     public void updateAlarm(Long userId, Long alarmGroupId, AlarmRequest request) {
         validateAlarmRequest(request);
         validateUserSelectedStacks(userId, request.techStackIds());
@@ -67,12 +79,24 @@ public class AlarmCommandService {
         alarmRepository.saveAll(newAlarms);
     }
 
+    /**
+     * 알람을 삭제하는 메서드
+     * @param userId
+     * @param alarmGroupId
+     */
     public void deleteAlarm(Long userId, Long alarmGroupId) {
         List<Alarm> alarms = getUserAlarmGroup(userId, alarmGroupId);
 
         alarms.forEach(Alarm::softDelete);
     }
 
+    /**
+     * 알람 활성화/비활성화를 위한 메서드
+     * @param userId
+     * @param alarmGroupId
+     * @param request
+     * @return
+     */
     public Boolean updateSelected(
             Long userId,
             Long alarmGroupId,
@@ -84,6 +108,12 @@ public class AlarmCommandService {
         return request.selected();
     }
 
+    /**
+     * 유저가 선택한 기술스택을 확인하는 메서드
+     * @param userId
+     * @param alarmGroupId
+     * @return
+     */
     private List<Alarm> getUserAlarmGroup(Long userId, Long alarmGroupId) {
         List<Alarm> alarms = alarmRepository
                 .findByUserUserIdAndAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
@@ -102,6 +132,15 @@ public class AlarmCommandService {
         throw new CustomException(ErrorCode.ALARM_NOT_FOUND);
     }
 
+    /**
+     * 알람 요청 중복 데이터 제거 처리
+     * @param user
+     * @param alarmGroupId
+     * @param dayOfWeeks
+     * @param techStackIds
+     * @param alarmTime
+     * @return
+     */
     private List<Alarm> createAlarmRows(
             Users user,
             Long alarmGroupId,

@@ -25,6 +25,11 @@ public class AlarmQueryService {
     private final TechCategoryRepository techCategoryRepository;
     private final AlarmMapper alarmMapper;
 
+    /**
+     * 알람 목록 조회
+     * @param userId
+     * @return
+     */
     public AlarmResponse.ListResponse getAlarms(Long userId) {
 
         List<Alarm> alarms =
@@ -33,6 +38,12 @@ public class AlarmQueryService {
         return alarmMapper.toListResponse(alarms);
     }
 
+    /**
+     * 알람 상세 조회
+     * @param userId
+     * @param alarmGroupId
+     * @return
+     */
     public AlarmResponse.DetailResponse getAlarmDetail(Long userId, Long alarmGroupId) {
         List<Alarm> alarms = alarmRepository
                 .findByUserUserIdAndAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
@@ -44,6 +55,11 @@ public class AlarmQueryService {
         return alarmMapper.toDetailResponse(alarmGroupId, alarms);
     }
 
+    /**
+     * 알람 생성을 위해 카테고리/스택 조회 메서드
+     * @param userId
+     * @return
+     */
     public AlarmCategoryStackResponse getCategoryStacks(Long userId) {
         List<TechCategoryDto> activeCategories =
                 techCategoryRepository.findActiveCategoriesWithStackCount();
@@ -60,6 +76,12 @@ public class AlarmQueryService {
         return new AlarmCategoryStackResponse(categoryList);
     }
 
+    /**
+     * 알람 카테고리 응답 변환 로직
+     * @param category
+     * @param userId
+     * @return
+     */
     private AlarmCategoryStackResponse.CategoryResponse toAlarmCategoryResponse(
             TechCategoryDto category,
             Long userId
