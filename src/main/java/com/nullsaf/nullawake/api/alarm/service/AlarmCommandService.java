@@ -5,7 +5,7 @@ import com.nullsaf.nullawake.api.alarm.dto.request.*;
 import com.nullsaf.nullawake.api.alarm.entity.Alarm;
 import com.nullsaf.nullawake.api.alarm.repository.AlarmRepository;
 import com.nullsaf.nullawake.api.tech.entity.TechStack;
-import com.nullsaf.nullawake.api.tech.repository.UserTechStackRepository;
+import com.nullsaf.nullawake.api.tech.repository.usertechstack.UserTechStackRepository;
 import com.nullsaf.nullawake.api.user.entity.Users;
 import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
