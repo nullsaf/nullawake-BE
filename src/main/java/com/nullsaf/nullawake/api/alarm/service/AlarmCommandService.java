@@ -111,15 +111,23 @@ public class AlarmCommandService {
     ) {
         List<Alarm> alarms = new ArrayList<>();
 
-        for (String dayOfWeek : dayOfWeeks) {
-            for (Long techStackId : techStackIds) {
+        List<String> distinctDayOfWeeks = dayOfWeeks.stream()
+                .distinct()
+                .toList();
+
+        List<Long> distinctTechStackIds = techStackIds.stream()
+                .distinct()
+                .toList();
+
+        for (String dayOfWeek : distinctDayOfWeeks) {
+            for (Long techStackId : distinctTechStackIds) {
                 TechStack techStack = entityManager.getReference(TechStack.class, techStackId);
 
                 alarms.add(Alarm.builder()
                         .user(user)
                         .techStack(techStack)
                         .alarmGroupId(alarmGroupId)
-                        .dayOfWeek(dayOfWeek)
+                        .dayOfWeeks(dayOfWeek)
                         .alarmTime(alarmTime)
                         .selected(true)
                         .build());
@@ -140,7 +148,11 @@ public class AlarmCommandService {
     }
 
     private void validateUserSelectedStacks(Long userId, List<Long> techStackIds) {
-        for (Long techStackId : techStackIds) {
+        List<Long> distinctTechStackIds = techStackIds.stream()
+                .distinct()
+                .toList();
+
+        for (Long techStackId : distinctTechStackIds) {
             boolean selected = userTechStackRepository
                     .existsByUserIdAndTechStackIdAndSelectedTrue(userId, techStackId);
 
