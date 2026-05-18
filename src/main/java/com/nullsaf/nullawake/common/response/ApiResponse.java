@@ -27,6 +27,25 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static ApiResponse<Void> success(String message) {
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message(message)
+                .respondedAt(LocalDateTime.now())
+                .success(true)
+                .build();
+    }
+
+    public static <T> ApiResponse<T> created(String message, T data) {
+        return ApiResponse.<T>builder()
+                .code(201)
+                .message(message)
+                .respondedAt(LocalDateTime.now())
+                .data(data)
+                .success(true)
+                .build();
+    }
+
     public static <T> ApiResponse<T> fail(int code, String message) {
         return ApiResponse.<T>builder()
                 .code(code)
