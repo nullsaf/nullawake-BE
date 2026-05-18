@@ -142,7 +142,7 @@ public class AlarmCommandService {
     private void validateUserSelectedStacks(Long userId, List<Long> techStackIds) {
         for (Long techStackId : techStackIds) {
             boolean selected = userTechStackRepository
-                    .existsByUserIdAndTechStackIdAndSelected(userId, techStackId);
+                    .existsByUserIdAndTechStackIdAndSelectedTrue(userId, techStackId);
 
             if (!selected) {
                 throw new CustomException(ErrorCode.ALARM_INACTIVE_STACK);
