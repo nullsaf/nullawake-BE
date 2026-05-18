@@ -3,7 +3,7 @@ package com.nullsaf.nullawake.api.alarm.service;
 import com.nullsaf.nullawake.api.alarm.dto.response.AlarmCategoryStackResponse;
 import com.nullsaf.nullawake.api.alarm.dto.response.AlarmResponse;
 import com.nullsaf.nullawake.api.alarm.entity.Alarm;
-import com.nullsaf.nullawake.api.alarm.Mapper.AlarmMapper;
+import com.nullsaf.nullawake.api.alarm.mapper.AlarmMapper;
 import com.nullsaf.nullawake.api.alarm.repository.AlarmRepository;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;

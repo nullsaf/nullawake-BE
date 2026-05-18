@@ -1,4 +1,4 @@
-package com.nullsaf.nullawake.api.alarm.Mapper;
+package com.nullsaf.nullawake.api.alarm.mapper;
 
 import com.nullsaf.nullawake.api.alarm.dto.response.AlarmResponse;
 import com.nullsaf.nullawake.api.alarm.entity.Alarm;
