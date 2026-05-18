@@ -13,7 +13,7 @@ public class ApiResponse<T> {
 
     private int code;
     private String message;
-    private LocalDateTime responseAt;
+    private LocalDateTime respondedAt;
     private T data;
     private boolean success;
 
@@ -21,7 +21,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(200)
                 .message(message)
-                .responseAt(LocalDateTime.now())
+                .respondedAt(LocalDateTime.now())
                 .data(data)
                 .success(true)
                 .build();
@@ -31,7 +31,7 @@ public class ApiResponse<T> {
         return ApiResponse.<Void>builder()
                 .code(200)
                 .message(message)
-                .responseAt(LocalDateTime.now())
+                .respondedAt(LocalDateTime.now())
                 .success(true)
                 .build();
     }
@@ -40,7 +40,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(201)
                 .message(message)
-                .responseAt(LocalDateTime.now())
+                .respondedAt(LocalDateTime.now())
                 .data(data)
                 .success(true)
                 .build();
@@ -50,7 +50,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .code(code)
                 .message(message)
-                .responseAt(LocalDateTime.now())
+                .respondedAt(LocalDateTime.now())
                 .success(false)
                 .build();
     }
