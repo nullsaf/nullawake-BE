@@ -17,8 +17,18 @@ public enum ErrorCode {
     // TECH CATEGORY
     TECH_CATEGORY_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 카테고리 조회 중 오류가 발생했습니다."),
     TECH_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 기술 카테고리입니다."),
-    TECH_STACK_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 목록 조회 중 오류가 발생했습니다.");
+    TECH_STACK_QUERY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 목록 조회 중 오류가 발생했습니다."),
 
+    // Alarm
+    ALARM_LIST_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 알람 목록 조회 요청입니다."),
+    ALARM_CREATE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "기술 스택, 요일, 알람 시간 설정은 필수입니다."),
+    ALARM_UPDATE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "알람 수정 요청 값이 올바르지 않습니다."),
+    ALARM_DELETE_FAILED(HttpStatus.BAD_REQUEST, "알람 삭제에 실패했습니다."),
+    ALARM_SELECTED_BAD_REQUEST(HttpStatus.BAD_REQUEST, "알람 활성화 여부 값이 올바르지 않습니다."),
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "알람을 찾을 수 없습니다."),
+    ALARM_CATEGORY_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, "활성화된 카테고리/스택을 찾을 수 없습니다."),
+    ALARM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
+    ALARM_INACTIVE_STACK(HttpStatus.BAD_REQUEST, "활성화하지 않은 카테고리/스택으로는 알람을 생성할 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
