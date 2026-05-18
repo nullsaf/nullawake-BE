@@ -154,7 +154,7 @@ public class AlarmCommandService {
 
         for (Long techStackId : distinctTechStackIds) {
             boolean selected = userTechStackRepository
-                    .existsByUserIdAndTechStackIdAndSelectedTrue(userId, techStackId);
+                    .existsByUserUserIdAndTechStackTechStackIdAndSelectedTrue(userId, techStackId);
 
             if (!selected) {
                 throw new CustomException(ErrorCode.ALARM_INACTIVE_STACK);

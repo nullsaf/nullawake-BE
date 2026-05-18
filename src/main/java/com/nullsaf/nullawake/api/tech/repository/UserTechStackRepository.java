@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserTechStackRepository
         extends JpaRepository<UserTechStack, Long> {
 
-    boolean existsByUserIdAndTechStackIdAndSelectedTrue(
+    boolean existsByUserUserIdAndTechStackTechStackIdAndSelectedTrue(
             Long userId,
             Long techStackId
     );
