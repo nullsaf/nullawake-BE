@@ -1,10 +1,12 @@
 package com.nullsaf.nullawake.api.tech.service;
 
+import com.nullsaf.nullawake.api.tech.dto.SelectedTechStackResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechStackSelectionRequest;
 import com.nullsaf.nullawake.api.tech.dto.TechStackSelectionResponse;
+import com.nullsaf.nullawake.api.tech.entity.TechCategory;
 import com.nullsaf.nullawake.api.tech.entity.TechStack;
 import com.nullsaf.nullawake.api.tech.entity.UserTechStack;
 import com.nullsaf.nullawake.api.tech.repository.techcategory.TechCategoryRepository;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -289,6 +292,86 @@ public class TechCategoryService {
             throw e;
         } catch (Exception e) {
             throw new CustomException(ErrorCode.TECH_STACK_SELECTION_UPDATE_FAILED);
+        }
+    }
+
+    /**
+     * 사용자가 활성화한 기술 스택 목록 전체 조회
+     * @param userId 사용자 ID
+     * @return SelectedTechStackResponse
+     */
+    @Transactional(readOnly = true)
+    public SelectedTechStackResponse getSelectedTechStacksByUserId(Long userId) {
+        try {
+
+            // 활성 카테고리 전체 조회
+            List<TechCategory> categories =
+                techCategoryRepository
+                    .findByDevActiveTrueOrderByTechCategoryIdAsc();
+
+            // 사용자가 선택한 기술 스택 조회
+            List<UserTechStack> selectedStacks =
+                userTechStackRepository
+                    .findSelectedTechStacksByUserId(userId);
+
+            // categoryId 기준 grouping
+            Map<Long, List<UserTechStack>> groupedMap =
+                selectedStacks.stream()
+                    .collect(Collectors.groupingBy(
+                        uts -> uts.getTechStack()
+                            .getTechCategory()
+                            .getTechCategoryId()
+                    ));
+
+            List<SelectedTechStackResponse.TechCategoryInfo>
+                techCategoryInfos = categories.stream()
+                .map(category -> {
+
+                    List<UserTechStack> categoryStacks =
+                        groupedMap.getOrDefault(
+                            category.getTechCategoryId(),
+                            List.of()
+                        );
+
+                    List<SelectedTechStackResponse.TechCategoryInfo.SelectedTechStackInfo>
+                        selectedTechStackList =
+                        categoryStacks.stream()
+                            .map(uts ->
+                                new SelectedTechStackResponse
+                                    .TechCategoryInfo
+                                    .SelectedTechStackInfo(
+                                    uts.getTechStack().getTechStackId(),
+                                    uts.getTechStack().getTechStackName()
+                                )
+                            )
+                            .toList();
+
+                    return new SelectedTechStackResponse.TechCategoryInfo(
+                        category.getTechCategoryId(),
+                        category.getTechCategoryName(),
+                        selectedTechStackList.size(),
+                        selectedTechStackList
+                    );
+                })
+                .toList();
+
+            log.debug(
+                "[TechCategoryService] 선택 기술 스택 조회 성공 - userId={}", userId
+            );
+
+            return new SelectedTechStackResponse(techCategoryInfos);
+
+        } catch (Exception e) {
+
+            log.error(
+                "[TechCategoryService] 선택 기술 스택 조회 실패 - userId={}",
+                userId,
+                e
+            );
+
+            throw new CustomException(
+                ErrorCode.SELECTED_TECH_STACK_READ_FAILED
+            );
         }
     }
 }

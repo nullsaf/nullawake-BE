@@ -7,4 +7,6 @@ public interface UserTechStackRepositoryCustom {
     long deleteByUserIdAndCategoryId(Long userId, Long categoryId);
 
     List<UserTechStack> findByUserIdAndTechStackIds(Long userId, List<Long> techStackIds);
+
+    List<UserTechStack> findSelectedTechStacksByUserId(Long userId);
 }

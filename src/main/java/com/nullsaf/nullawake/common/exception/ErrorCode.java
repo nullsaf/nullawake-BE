@@ -24,6 +24,7 @@ public enum ErrorCode {
     TECH_STACK_SELECTION_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 선택 정보 저장 중 오류가 발생했습니다."),
     TECH_STACK_SELECTION_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기술 스택 선택 정보 수정 중 오류가 발생했습니다."),
     TECH_STACK_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "선택된 기술 스택 정보가 비어있습니다."),
+    SELECTED_TECH_STACK_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "선택한 기술 스택 조회 중 오류가 발생했습니다."),
 
     // Alarm
     ALARM_LIST_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 알람 목록 조회 요청입니다."),

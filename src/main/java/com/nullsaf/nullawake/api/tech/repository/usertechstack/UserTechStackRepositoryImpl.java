@@ -1,5 +1,6 @@
 package com.nullsaf.nullawake.api.tech.repository.usertechstack;
 
+import com.nullsaf.nullawake.api.tech.entity.QTechStack;
 import com.nullsaf.nullawake.api.tech.entity.QUserTechStack;
 import com.nullsaf.nullawake.api.tech.entity.UserTechStack;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,6 +12,7 @@ public class UserTechStackRepositoryImpl implements UserTechStackRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     private final QUserTechStack userTechStack = QUserTechStack.userTechStack;
+    private final QTechStack techStack = QTechStack.techStack;
 
     @Override
     public long deleteByUserIdAndCategoryId(Long userId, Long categoryId) {
@@ -37,6 +39,21 @@ public class UserTechStackRepositoryImpl implements UserTechStackRepositoryCusto
             .where(
                 userTechStack.user.userId.eq(userId),
                 userTechStack.techStack.techStackId.in(techStackIds)
+            )
+            .fetch();
+    }
+
+    @Override
+    public List<UserTechStack> findSelectedTechStacksByUserId(Long userId) {
+        return queryFactory
+            .selectFrom(userTechStack)
+            .join(userTechStack.techStack, techStack).fetchJoin()
+            .join(techStack.techCategory).fetchJoin()
+            .where(
+                userTechStack.user.userId.eq(userId),
+                userTechStack.selected.isTrue(),
+                techStack.devActive.isTrue(),
+                techStack.techCategory.devActive.isTrue()
             )
             .fetch();
     }

@@ -1,6 +1,7 @@
 package com.nullsaf.nullawake.api.tech.controller;
 
 import com.nullsaf.nullawake.api.auth.security.CustomUserDetails;
+import com.nullsaf.nullawake.api.tech.dto.SelectedTechStackResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
 import com.nullsaf.nullawake.api.tech.dto.TechStackSelectionRequest;
@@ -71,8 +72,26 @@ public class TechCategoryController {
         );
     }
 
-//    @GetMapping("/me")
-//
+    @GetMapping("/me")
+    @Operation(
+        summary = "사용자가 선택한 기술 스택 목록 조회",
+        description = "각 카테고리 별로 사용자가 선택한 기술 스택 목록과 개수를 반환합니다. "
+    )
+    public ResponseEntity<ApiResponse<SelectedTechStackResponse>> getSelectedTechStacksByUserId(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        SelectedTechStackResponse response = techCategoryService.getSelectedTechStacksByUserId(userId);
+
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                "사용자별 활성화된 기술 스택 정보 조회에 성공했습니다.",
+                response
+            )
+        );
+    }
+
     @PostMapping("/me/{techCategoryId}/tech-stacks")
     @Operation(
         summary = "기술 스택 선택 정보 저장",
@@ -116,5 +135,4 @@ public class TechCategoryController {
             )
         );
     }
-
 }
