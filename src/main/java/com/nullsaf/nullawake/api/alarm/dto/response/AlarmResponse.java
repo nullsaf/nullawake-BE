@@ -25,7 +25,7 @@ public record AlarmResponse() {
     public record DetailResponse(
             Long alarmGroupId,
             List<StackItem> stackList,
-            List<String> dayOfWeek,
+            List<String> dayOfWeeks,
             LocalTime alarmTime,
             Boolean selected
     ) {

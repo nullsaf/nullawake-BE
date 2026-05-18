@@ -31,7 +31,7 @@ public class AlarmMapper {
                                     .toList();
 
                             List<String> dayOfWeeks = groupAlarms.stream()
-                                    .map(Alarm::getDayOfWeek)
+                                    .map(Alarm::getDayOfWeeks)
                                     .distinct()
                                     .sorted()
                                     .toList();
@@ -64,7 +64,7 @@ public class AlarmMapper {
         Alarm first = alarms.get(0);
 
         List<String> dayOfWeeks = alarms.stream()
-                .map(Alarm::getDayOfWeek)
+                .map(Alarm::getDayOfWeeks)
                 .distinct()
                 .sorted()
                 .toList();
