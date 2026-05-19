@@ -46,7 +46,7 @@ public class AlarmQueryService {
      */
     public AlarmResponse.DetailResponse getAlarmDetail(Long userId, Long alarmGroupId) {
         List<Alarm> alarms = alarmRepository
-                .findByUserUserIdAndAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
+                .findByUserUserIdAndAlarmGroupAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
 
         if (alarms.isEmpty()) {
             throw new CustomException(ErrorCode.ALARM_NOT_FOUND);

@@ -1,8 +1,10 @@
 package com.nullsaf.nullawake.api.alarm.service;
 
-import com.nullsaf.nullawake.api.alarm.dto.request.*;
-
+import com.nullsaf.nullawake.api.alarm.dto.request.AlarmRequest;
+import com.nullsaf.nullawake.api.alarm.dto.request.AlarmSelectedRequest;
 import com.nullsaf.nullawake.api.alarm.entity.Alarm;
+import com.nullsaf.nullawake.api.alarm.entity.AlarmGroup;
+import com.nullsaf.nullawake.api.alarm.repository.AlarmGroupRepository;
 import com.nullsaf.nullawake.api.alarm.repository.AlarmRepository;
 import com.nullsaf.nullawake.api.tech.entity.TechStack;
 import com.nullsaf.nullawake.api.tech.repository.usertechstack.UserTechStackRepository;
@@ -14,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import java.util.List;
 public class AlarmCommandService {
 
     private final AlarmRepository alarmRepository;
+    private final AlarmGroupRepository alarmGroupRepository;
     private final EntityManager entityManager;
     private final UserTechStackRepository userTechStackRepository;
 
@@ -33,15 +38,17 @@ public class AlarmCommandService {
      * @return
      */
     public Long createAlarm(Long userId, AlarmRequest request) {
-        validateAlarmRequest(request);
         validateUserSelectedStacks(userId, request.techStackIds());
 
-        Long alarmGroupId = alarmRepository.findNextAlarmGroupId();
         Users user = entityManager.getReference(Users.class, userId);
+
+        AlarmGroup alarmGroup = alarmGroupRepository.save(
+                AlarmGroup.builder().build()
+        );
 
         List<Alarm> alarms = createAlarmRows(
                 user,
-                alarmGroupId,
+                alarmGroup,
                 request.dayOfWeeks(),
                 request.techStackIds(),
                 request.alarmTime()
@@ -49,7 +56,7 @@ public class AlarmCommandService {
 
         alarmRepository.saveAll(alarms);
 
-        return alarmGroupId;
+        return alarmGroup.getAlarmGroupId();
     }
 
     /** 유저의 알람을 수정하는 메서드
@@ -59,9 +66,9 @@ public class AlarmCommandService {
      * @param request
      */
     public void updateAlarm(Long userId, Long alarmGroupId, AlarmRequest request) {
-        validateAlarmRequest(request);
         validateUserSelectedStacks(userId, request.techStackIds());
 
+        AlarmGroup alarmGroup = getAlarmGroup(alarmGroupId);
         List<Alarm> existingAlarms = getUserAlarmGroup(userId, alarmGroupId);
 
         existingAlarms.forEach(Alarm::softDelete);
@@ -70,7 +77,7 @@ public class AlarmCommandService {
 
         List<Alarm> newAlarms = createAlarmRows(
                 user,
-                alarmGroupId,
+                alarmGroup,
                 request.dayOfWeeks(),
                 request.techStackIds(),
                 request.alarmTime()
@@ -85,9 +92,11 @@ public class AlarmCommandService {
      * @param alarmGroupId
      */
     public void deleteAlarm(Long userId, Long alarmGroupId) {
+        AlarmGroup alarmGroup = getAlarmGroup(alarmGroupId);
         List<Alarm> alarms = getUserAlarmGroup(userId, alarmGroupId);
 
         alarms.forEach(Alarm::softDelete);
+        alarmGroup.softDelete();
     }
 
     /**
@@ -95,7 +104,7 @@ public class AlarmCommandService {
      * @param userId
      * @param alarmGroupId
      * @param request
-     * @return
+     * @return 활성화 여부
      */
     public Boolean updateSelected(
             Long userId,
@@ -105,27 +114,37 @@ public class AlarmCommandService {
         List<Alarm> alarms = getUserAlarmGroup(userId, alarmGroupId);
 
         alarms.forEach(alarm -> alarm.updateSelected(request.selected()));
+
         return request.selected();
+    }
+
+    /**
+     * 알람 그룹을 조회하는 메서드
+     * @param alarmGroupId 알람그룹 ID
+     * @return 알람 그룹
+     */
+    private AlarmGroup getAlarmGroup(Long alarmGroupId) {
+        return alarmGroupRepository.findByAlarmGroupIdAndDeletedAtIsNull(alarmGroupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ALARM_NOT_FOUND));
     }
 
     /**
      * 유저가 선택한 기술스택을 확인하는 메서드
      * @param userId
      * @param alarmGroupId
-     * @return
+     * @return 유저의 기술 스택
      */
     private List<Alarm> getUserAlarmGroup(Long userId, Long alarmGroupId) {
         List<Alarm> alarms = alarmRepository
-                .findByUserUserIdAndAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
+                .findByUserUserIdAndAlarmGroupAlarmGroupIdAndDeletedAtIsNull(userId, alarmGroupId);
 
         if (!alarms.isEmpty()) {
             return alarms;
         }
 
-        List<Alarm> existingAlarms = alarmRepository
-                .findByAlarmGroupIdAndDeletedAtIsNull(alarmGroupId);
+        boolean exists = alarmGroupRepository.existsByAlarmGroupIdAndDeletedAtIsNull(alarmGroupId);
 
-        if (!existingAlarms.isEmpty()) {
+        if (exists) {
             throw new CustomException(ErrorCode.ALARM_ACCESS_DENIED);
         }
 
@@ -135,22 +154,20 @@ public class AlarmCommandService {
     /**
      * 알람 요청 중복 데이터 제거 처리
      * @param user
-     * @param alarmGroupId
      * @param dayOfWeeks
      * @param techStackIds
      * @param alarmTime
-     * @return
      */
     private List<Alarm> createAlarmRows(
             Users user,
-            Long alarmGroupId,
-            List<String> dayOfWeeks,
+            AlarmGroup alarmGroup,
+            List<DayOfWeek> dayOfWeeks,
             List<Long> techStackIds,
-            java.time.LocalTime alarmTime
+            LocalTime alarmTime
     ) {
         List<Alarm> alarms = new ArrayList<>();
 
-        List<String> distinctDayOfWeeks = dayOfWeeks.stream()
+        List<DayOfWeek> distinctDayOfWeeks = dayOfWeeks.stream()
                 .distinct()
                 .toList();
 
@@ -158,14 +175,14 @@ public class AlarmCommandService {
                 .distinct()
                 .toList();
 
-        for (String dayOfWeek : distinctDayOfWeeks) {
+        for (DayOfWeek dayOfWeek : distinctDayOfWeeks) {
             for (Long techStackId : distinctTechStackIds) {
                 TechStack techStack = entityManager.getReference(TechStack.class, techStackId);
 
                 alarms.add(Alarm.builder()
+                        .alarmGroup(alarmGroup)
                         .user(user)
                         .techStack(techStack)
-                        .alarmGroupId(alarmGroupId)
                         .dayOfWeeks(dayOfWeek)
                         .alarmTime(alarmTime)
                         .selected(true)
@@ -174,16 +191,6 @@ public class AlarmCommandService {
         }
 
         return alarms;
-    }
-
-    private void validateAlarmRequest(AlarmRequest request) {
-        if (request.alarmTime() == null
-                || request.dayOfWeeks() == null
-                || request.dayOfWeeks().isEmpty()
-                || request.techStackIds() == null
-                || request.techStackIds().isEmpty()) {
-            throw new CustomException(ErrorCode.ALARM_CREATE_BAD_REQUEST);
-        }
     }
 
     private void validateUserSelectedStacks(Long userId, List<Long> techStackIds) {
