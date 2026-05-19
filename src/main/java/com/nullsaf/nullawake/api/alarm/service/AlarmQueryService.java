@@ -7,7 +7,7 @@ import com.nullsaf.nullawake.api.alarm.mapper.AlarmMapper;
 import com.nullsaf.nullawake.api.alarm.repository.AlarmRepository;
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
-import com.nullsaf.nullawake.api.tech.repository.TechCategoryRepository;
+import com.nullsaf.nullawake.api.tech.repository.techcategory.TechCategoryRepository;
 import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
