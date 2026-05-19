@@ -35,7 +35,14 @@ public enum ErrorCode {
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "알람을 찾을 수 없습니다."),
     ALARM_CATEGORY_STACK_NOT_FOUND(HttpStatus.NOT_FOUND, "활성화된 카테고리/스택을 찾을 수 없습니다."),
     ALARM_ACCESS_DENIED(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
-    ALARM_INACTIVE_STACK(HttpStatus.BAD_REQUEST, "활성화하지 않은 카테고리/스택으로는 알람을 생성할 수 없습니다.");
+    ALARM_INACTIVE_STACK(HttpStatus.BAD_REQUEST, "활성화하지 않은 카테고리/스택으로는 알람을 생성할 수 없습니다."),
+
+    // Question
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 문제입니다."),
+    QUESTION_QUERY_FAILED(HttpStatus.BAD_REQUEST, "문제 조회에 실패했습니다."),
+    QUESTION_SUBMIT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "제출한 답안 형식이 올바르지 않습니다."),
+    QUESTION_ANSWER_QUERY_FAILED(HttpStatus.BAD_REQUEST, "정답 확인에 실패했습니다."),
+    QUESTION_CHOICE_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 선택지입니다.");
 
     private final HttpStatus status;
     private final String message;
