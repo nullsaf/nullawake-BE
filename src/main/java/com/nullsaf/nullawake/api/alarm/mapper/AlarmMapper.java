@@ -4,6 +4,7 @@ import com.nullsaf.nullawake.api.alarm.dto.response.AlarmResponse;
 import com.nullsaf.nullawake.api.alarm.entity.Alarm;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,46 +14,55 @@ import java.util.stream.Collectors;
 public class AlarmMapper {
 
     public AlarmResponse.ListResponse toListResponse(List<Alarm> alarms) {
-
         Map<Long, List<Alarm>> groupedAlarms = alarms.stream()
                 .collect(Collectors.groupingBy(Alarm::getAlarmGroupId));
 
-        List<AlarmResponse.AlarmItem> alarmItems =
-                groupedAlarms.entrySet().stream()
-                        .map(entry -> {
+        List<AlarmResponse.AlarmItem> alarmItems = groupedAlarms.entrySet().stream()
+                .map(entry -> {
+                    Long alarmGroupId = entry.getKey();
+                    List<Alarm> groupAlarms = entry.getValue();
 
-                            Long alarmGroupId = entry.getKey();
-                            List<Alarm> groupAlarms = entry.getValue();
+                    Alarm first = groupAlarms.get(0);
 
-                            Alarm first = groupAlarms.get(0);
+                    List<Long> alarmIds = groupAlarms.stream()
+                            .map(Alarm::getAlarmId)
+                            .toList();
 
-                            List<Long> alarmIds = groupAlarms.stream()
-                                    .map(Alarm::getAlarmId)
-                                    .toList();
+                    List<Long> techStackIds = groupAlarms.stream()
+                            .map(alarm -> alarm.getTechStack().getTechStackId())
+                            .distinct()
+                            .sorted()
+                            .toList();
 
-                            List<String> dayOfWeeks = groupAlarms.stream()
-                                    .map(Alarm::getDayOfWeeks)
-                                    .distinct()
-                                    .sorted()
-                                    .toList();
+                    List<String> categoryNames = groupAlarms.stream()
+                            .map(alarm -> alarm.getTechStack().getTechCategory().getTechCategoryName())
+                            .distinct()
+                            .toList();
 
-                            return new AlarmResponse.AlarmItem(
-                                    alarmGroupId,
-                                    alarmIds,
-                                    first.getTechStack().getTechStackId(),
-                                    first.getTechStack()
-                                            .getTechCategory()
-                                            .getTechCategoryName(),
-                                    first.getTechStack().getTechStackName(),
-                                    dayOfWeeks,
-                                    first.getAlarmTime(),
-                                    first.getSelected()
-                            );
-                        })
-                        .sorted(Comparator.comparing(
-                                AlarmResponse.AlarmItem::alarmGroupId
-                        ))
-                        .toList();
+                    List<String> techStackNames = groupAlarms.stream()
+                            .map(alarm -> alarm.getTechStack().getTechStackName())
+                            .distinct()
+                            .toList();
+
+                    List<DayOfWeek> dayOfWeeks = groupAlarms.stream()
+                            .map(Alarm::getDayOfWeeks)
+                            .distinct()
+                            .sorted()
+                            .toList();
+
+                    return new AlarmResponse.AlarmItem(
+                            alarmGroupId,
+                            alarmIds,
+                            techStackIds,
+                            categoryNames,
+                            techStackNames,
+                            dayOfWeeks,
+                            first.getAlarmTime(),
+                            first.getSelected()
+                    );
+                })
+                .sorted(Comparator.comparing(AlarmResponse.AlarmItem::alarmGroupId))
+                .toList();
 
         return new AlarmResponse.ListResponse(alarmItems);
     }
@@ -63,7 +73,7 @@ public class AlarmMapper {
     ) {
         Alarm first = alarms.get(0);
 
-        List<String> dayOfWeeks = alarms.stream()
+        List<DayOfWeek> dayOfWeeks = alarms.stream()
                 .map(Alarm::getDayOfWeeks)
                 .distinct()
                 .sorted()
