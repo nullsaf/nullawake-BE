@@ -1,5 +1,6 @@
 package com.nullsaf.nullawake.api.alarm.dto.response;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -13,10 +14,10 @@ public record AlarmResponse() {
     public record AlarmItem(
             Long alarmGroupId,
             List<Long> alarmIds,
-            Long techStackId,
-            String categoryName,
-            String techStackName,
-            List<String> dayOfWeek,
+            List<Long> techStackIds,
+            List<String> categoryNames,
+            List<String> techStackNames,
+            List<DayOfWeek> dayOfWeek,
             LocalTime alarmTime,
             Boolean selected
     ) {
@@ -25,7 +26,7 @@ public record AlarmResponse() {
     public record DetailResponse(
             Long alarmGroupId,
             List<StackItem> stackList,
-            List<String> dayOfWeeks,
+            List<DayOfWeek> dayOfWeeks,
             LocalTime alarmTime,
             Boolean selected
     ) {
