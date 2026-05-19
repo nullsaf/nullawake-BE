@@ -8,15 +8,31 @@ import java.util.List;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
+    @Query("""
+            select a
+            from Alarm a
+            join fetch a.alarmGroup ag
+            join fetch a.techStack ts
+            join fetch ts.techCategory
+            where a.user.userId = :userId
+              and a.deletedAt is null
+              and ag.deletedAt is null
+            """)
     List<Alarm> findByUserUserIdAndDeletedAtIsNull(Long userId);
 
-    List<Alarm> findByUserUserIdAndAlarmGroupIdAndDeletedAtIsNull(
+    @Query("""
+            select a
+            from Alarm a
+            join fetch a.alarmGroup ag
+            join fetch a.techStack ts
+            join fetch ts.techCategory
+            where a.user.userId = :userId
+              and ag.alarmGroupId = :alarmGroupId
+              and a.deletedAt is null
+              and ag.deletedAt is null
+            """)
+    List<Alarm> findByUserUserIdAndAlarmGroupAlarmGroupIdAndDeletedAtIsNull(
             Long userId,
             Long alarmGroupId
     );
-
-    List<Alarm> findByAlarmGroupIdAndDeletedAtIsNull(Long alarmGroupId);
-
-    @Query("select coalesce(max(a.alarmGroupId), 0) + 1 from Alarm a")
-    Long findNextAlarmGroupId();
 }
