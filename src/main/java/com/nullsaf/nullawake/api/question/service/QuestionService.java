@@ -43,7 +43,7 @@ public class QuestionService {
      */
     public QuestionResponse getQuestion(Long questionId) {
         // 문제와 연관된 기술 스택, 선택지 정보를 함께 조회
-        Question question = questionRepository.findByIdWithTechStack(questionId)
+        Question question = questionRepository.findByQuestionId(questionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_NOT_FOUND));
 
         return QuestionResponse.from(question);
@@ -129,7 +129,7 @@ public class QuestionService {
      * @return 정답 및 해설 정보
      */
     public QuestionAnswerResponse getAnswer(Long historyId, Long userId) {
-        QuestionHistory history = questionHistoryRepository.findByIdWithQuestion(historyId)
+        QuestionHistory history = questionHistoryRepository.findByHistoryId(historyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_ANSWER_QUERY_FAILED));
 
         if (!history.getUser().getUserId().equals(userId)) {
