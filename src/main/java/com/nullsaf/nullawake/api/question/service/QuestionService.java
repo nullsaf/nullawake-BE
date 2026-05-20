@@ -132,6 +132,7 @@ public class QuestionService {
         QuestionHistory history = questionHistoryRepository.findByHistoryId(historyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_ANSWER_QUERY_FAILED));
 
+        // 현재 사용자의 풀이 기록인지 검증
         if (!history.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.QUESTION_ANSWER_QUERY_FAILED);
         }
@@ -140,6 +141,7 @@ public class QuestionService {
 
         Long correctChoiceId = null;
 
+        // 객관식 문제의 경우 정답 선지 조회
         if (question.getQuestionType() == QuestionType.MULTIPLE_CHOICE) {
             correctChoiceId = questionChoiceRepository
                     .findByQuestionQuestionIdAndIsAnswerTrue(question.getQuestionId())
