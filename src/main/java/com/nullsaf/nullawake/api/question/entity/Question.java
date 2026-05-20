@@ -1,5 +1,7 @@
 package com.nullsaf.nullawake.api.question.entity;
 
+import com.nullsaf.nullawake.api.question.enums.Difficulty;
+import com.nullsaf.nullawake.api.question.enums.QuestionType;
 import com.nullsaf.nullawake.api.tech.entity.TechStack;
 import jakarta.persistence.*;
 import lombok.*;

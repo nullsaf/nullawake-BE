@@ -7,7 +7,7 @@ import com.nullsaf.nullawake.api.question.dto.QuestionSubmitResponse;
 import com.nullsaf.nullawake.api.question.entity.Question;
 import com.nullsaf.nullawake.api.question.entity.QuestionChoice;
 import com.nullsaf.nullawake.api.question.entity.QuestionHistory;
-import com.nullsaf.nullawake.api.question.entity.QuestionType;
+import com.nullsaf.nullawake.api.question.enums.QuestionType;
 import com.nullsaf.nullawake.api.question.repository.QuestionChoiceRepository;
 import com.nullsaf.nullawake.api.question.repository.QuestionHistoryRepository;
 import com.nullsaf.nullawake.api.question.repository.QuestionRepository;

@@ -1,7 +1,7 @@
 package com.nullsaf.nullawake.api.question.dto;
 
 import com.nullsaf.nullawake.api.question.entity.Question;
-import com.nullsaf.nullawake.api.question.entity.QuestionType;
+import com.nullsaf.nullawake.api.question.enums.QuestionType;
 
 import java.util.List;
 
