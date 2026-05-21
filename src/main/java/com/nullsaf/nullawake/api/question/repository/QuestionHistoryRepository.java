@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface QuestionHistoryRepository extends JpaRepository<QuestionHistory, Long> {
+public interface QuestionHistoryRepository extends JpaRepository<QuestionHistory, Long>, QuestionHistoryRepositoryCustom {
 
     @EntityGraph(attributePaths = {"question"})
     Optional<QuestionHistory> findByHistoryId(Long historyId);
