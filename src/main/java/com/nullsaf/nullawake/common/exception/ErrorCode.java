@@ -42,7 +42,14 @@ public enum ErrorCode {
     QUESTION_QUERY_FAILED(HttpStatus.BAD_REQUEST, "문제 조회에 실패했습니다."),
     QUESTION_SUBMIT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "제출한 답안 형식이 올바르지 않습니다."),
     QUESTION_ANSWER_QUERY_FAILED(HttpStatus.BAD_REQUEST, "정답 확인에 실패했습니다."),
-    QUESTION_CHOICE_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 선택지입니다.");
+    QUESTION_CHOICE_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 선택지입니다."),
+
+    // Question History
+    SOLVED_QUESTION_LIST_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "사용자가 푼 문제 목록 조회 중 오류가 발생했습니다."),
+    INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "조회 개수는 1 이상이어야 합니다."),
+    QUESTION_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "문제 풀이 기록이 존재하지 않습니다."),
+    QUESTION_HISTORY_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 문제 풀이 기록에 접근할 수 없습니다."),
+    QUESTION_HISTORY_DETAIL_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "문제 풀이 기록 상세 조회 중 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String message;
