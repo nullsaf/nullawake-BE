@@ -26,6 +26,20 @@ public class TechCategoryRepositoryImpl implements TechCategoryRepositoryCustom 
     private final QUserTechStack userTechStack = QUserTechStack.userTechStack;
 
     /**
+     * 활성화된 기술 카테고리를 조회
+     * @return
+     */
+    @Override
+    public List<TechCategory> findActiveCategories() {
+        return queryFactory
+            .selectFrom(techCategory)
+            .where(techCategory.devActive.isTrue())
+            .orderBy(techCategory.techCategoryId.asc())
+            .fetch();
+    }
+
+
+    /**
      * 활성화된 카테고리 조회
      * @return TechCategoryDto
      */

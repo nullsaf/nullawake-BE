@@ -19,11 +19,9 @@ import com.nullsaf.nullawake.common.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -307,7 +305,7 @@ public class TechCategoryService {
             // 활성 카테고리 전체 조회
             List<TechCategory> categories =
                 techCategoryRepository
-                    .findByDevActiveTrueOrderByTechCategoryIdAsc();
+                    .findActiveCategories();
 
             // 사용자가 선택한 기술 스택 조회
             List<UserTechStack> selectedStacks =

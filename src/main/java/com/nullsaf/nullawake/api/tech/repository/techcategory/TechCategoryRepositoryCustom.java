@@ -2,6 +2,7 @@ package com.nullsaf.nullawake.api.tech.repository.techcategory;
 
 import com.nullsaf.nullawake.api.tech.dto.TechCategoryResponse.TechCategoryDto;
 import com.nullsaf.nullawake.api.tech.dto.TechStackListResponse;
+import com.nullsaf.nullawake.api.tech.entity.TechCategory;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,8 @@ import java.util.Optional;
  * The interface Tech category repository custom.
  */
 public interface TechCategoryRepositoryCustom {
+
+    List<TechCategory> findActiveCategories();
 
     // 활성화된 카테고리를 스택 개수와 함께 조회
     List<TechCategoryDto> findActiveCategoriesWithStackCount();
