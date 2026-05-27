@@ -49,7 +49,12 @@ public enum ErrorCode {
     INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "조회 개수는 1 이상이어야 합니다."),
     QUESTION_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "문제 풀이 기록이 존재하지 않습니다."),
     QUESTION_HISTORY_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 문제 풀이 기록에 접근할 수 없습니다."),
-    QUESTION_HISTORY_DETAIL_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "문제 풀이 기록 상세 조회 중 오류가 발생했습니다.");
+    QUESTION_HISTORY_DETAIL_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "문제 풀이 기록 상세 조회 중 오류가 발생했습니다."),
+
+    // BOOKMARK
+    QUESTION_BOOKMARK_FORBIDDEN(HttpStatus.FORBIDDEN, "문제가 존재하지 않거나 비활성화된 문제입니다."),
+    QUESTION_BOOKMARK_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "문제 북마크 추가 중 오류가 발생했습니다.");
+
 
     private final HttpStatus status;
     private final String message;
