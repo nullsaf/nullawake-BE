@@ -216,4 +216,45 @@ public class QuestionService {
             throw new CustomException(ErrorCode.QUESTION_BOOKMARK_SAVE_FAILED);
         }
     }
+
+    @Transactional
+    public QuestionBookmarkResponse deleteBookmark(Long questionId, Long userId) {
+        try {
+            // 사용자 존재하는지 확인
+            Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            // 문제 존재하는지 확인 (없으면 404)
+            Question question = questionRepository.findByQuestionIdAndDevActiveTrue(questionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_NOT_FOUND));
+
+            // 풀은 문제인지 확인
+            boolean isSolved = questionHistoryRepository.existsByUser_UserIdAndQuestion_QuestionId(userId, questionId);
+
+            if (!isSolved) {
+                throw new CustomException(ErrorCode.QUESTION_BOOKMARK_FORBIDDEN);
+            }
+
+            questionBookmarkRepository.deleteByUser_UserIdAndQuestion_QuestionId(
+                userId,
+                questionId
+            );
+
+            return new QuestionBookmarkResponse(
+                questionId,
+                false
+            );
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(
+                "[QuestionBookmarkService] 문제 북마크 식제 실패 - userId={}, questionId={}",
+                userId,
+                questionId,
+                e
+            );
+
+            throw new CustomException(ErrorCode.QUESTION_BOOKMARK_SAVE_FAILED);
+        }
+    }
 }

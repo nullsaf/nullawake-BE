@@ -75,4 +75,19 @@ public class QuestionController {
             response
         );
     }
+
+    @Operation(summary = "문제 북마크 삭제")
+    @DeleteMapping("/{questionId}/bookmark")
+    public ApiResponse<QuestionBookmarkResponse> deleteBookmark(
+        @PathVariable Long questionId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        QuestionBookmarkResponse response = questionService.deleteBookmark(questionId, userId);
+        return ApiResponse.success(
+            "문제 북마크 삭제에 성공했습니다.",
+            response
+        );
+    }
 }
