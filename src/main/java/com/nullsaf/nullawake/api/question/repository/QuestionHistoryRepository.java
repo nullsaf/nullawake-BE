@@ -14,4 +14,12 @@ public interface QuestionHistoryRepository extends JpaRepository<QuestionHistory
     default Optional<QuestionHistory> findByIdWithQuestion(Long historyId) {
         return findByHistoryId(historyId);
     }
+
+    /**
+     * 사용자가 문제를 한번 이상 풀었는지 확인 여부
+     * @param userId 사용자 ID
+     * @param questionId 문제 ID
+     * @return boolean
+     */
+    boolean existsByUser_UserIdAndQuestion_QuestionId(Long userId, Long questionId);
 }

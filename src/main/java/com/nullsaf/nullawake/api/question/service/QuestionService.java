@@ -1,13 +1,16 @@
 package com.nullsaf.nullawake.api.question.service;
 
 import com.nullsaf.nullawake.api.question.dto.QuestionAnswerResponse;
+import com.nullsaf.nullawake.api.question.dto.QuestionBookmarkResponse;
 import com.nullsaf.nullawake.api.question.dto.QuestionResponse;
 import com.nullsaf.nullawake.api.question.dto.QuestionSubmitRequest;
 import com.nullsaf.nullawake.api.question.dto.QuestionSubmitResponse;
 import com.nullsaf.nullawake.api.question.entity.Question;
 import com.nullsaf.nullawake.api.question.entity.QuestionChoice;
 import com.nullsaf.nullawake.api.question.entity.QuestionHistory;
+import com.nullsaf.nullawake.api.question.entity.UserQuestionBookmark;
 import com.nullsaf.nullawake.api.question.enums.QuestionType;
+import com.nullsaf.nullawake.api.question.repository.QuestionBookmarkRepository;
 import com.nullsaf.nullawake.api.question.repository.QuestionChoiceRepository;
 import com.nullsaf.nullawake.api.question.repository.QuestionHistoryRepository;
 import com.nullsaf.nullawake.api.question.repository.QuestionRepository;
@@ -17,6 +20,8 @@ import com.nullsaf.nullawake.common.exception.CustomException;
 import com.nullsaf.nullawake.common.exception.ErrorCode;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +30,15 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * 문제 조회, 답안 제출, 정답 확인 기능을 처리한다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionChoiceRepository questionChoiceRepository;
     private final QuestionHistoryRepository questionHistoryRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
     private final UserRepository userRepository;
 
     /**
@@ -41,6 +47,7 @@ public class QuestionService {
      * @param questionId 문제 ID
      * @return 문제 상세 정보
      */
+    @Transactional(readOnly = true)
     public QuestionResponse getQuestion(Long questionId) {
         // 문제와 연관된 기술 스택, 선택지 정보를 함께 조회
         Question question = questionRepository.findByIdWithTechStack(questionId)
@@ -128,6 +135,7 @@ public class QuestionService {
      * @param historyId 문제 풀이 이력 ID
      * @return 정답 및 해설 정보
      */
+    @Transactional(readOnly = true)
     public QuestionAnswerResponse getAnswer(Long historyId, Long userId) {
         QuestionHistory history = questionHistoryRepository.findByIdWithQuestion(historyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_ANSWER_QUERY_FAILED));
@@ -148,5 +156,105 @@ public class QuestionService {
         }
 
         return QuestionAnswerResponse.of(history, correctChoiceId);
+    }
+
+    @Transactional
+    public QuestionBookmarkResponse addBookmark(Long questionId, Long userId) {
+        try {
+            // 사용자 존재하는지 확인
+            Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            // 문제 존재하는지 확인 (없으면 404)
+            Question question = questionRepository.findByQuestionIdAndDevActiveTrue(questionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_NOT_FOUND));
+
+            // 풀은 문제인지 확인
+            boolean isSolved = questionHistoryRepository.existsByUser_UserIdAndQuestion_QuestionId(userId, questionId);
+
+            if (!isSolved) {
+                throw new CustomException(ErrorCode.QUESTION_BOOKMARK_FORBIDDEN);
+            }
+
+            // 이미 북마크를 했는지 확인
+            boolean alreadyBookmarked = questionBookmarkRepository.existsByUser_UserIdAndQuestion_QuestionId(userId, questionId);
+
+            if (alreadyBookmarked) {
+                return new QuestionBookmarkResponse(questionId, true);
+            }
+
+            UserQuestionBookmark bookmark = UserQuestionBookmark.builder()
+                .user(user)
+                .question(question)
+                .build();
+
+            questionBookmarkRepository.save(bookmark);
+
+            return new QuestionBookmarkResponse(questionId, true);
+        } catch (CustomException e) {
+            throw e;
+        } catch (DataIntegrityViolationException e) {
+            log.warn(
+                "[QuestionBookmarkService] 중복 북마크 요청 - userId={}, questionId={}",
+                userId,
+                questionId
+            );
+
+            return new QuestionBookmarkResponse(
+                questionId,
+                true
+            );
+
+        } catch (Exception e) {
+            log.error(
+                "[QuestionBookmarkService] 문제 북마크 추가 실패 - userId={}, questionId={}",
+                userId,
+                questionId,
+                e
+            );
+
+            throw new CustomException(ErrorCode.QUESTION_BOOKMARK_SAVE_FAILED);
+        }
+    }
+
+    @Transactional
+    public QuestionBookmarkResponse deleteBookmark(Long questionId, Long userId) {
+        try {
+            // 사용자 존재하는지 확인
+            Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            // 문제 존재하는지 확인 (없으면 404)
+            Question question = questionRepository.findByQuestionIdAndDevActiveTrue(questionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_NOT_FOUND));
+
+            // 풀은 문제인지 확인
+            boolean isSolved = questionHistoryRepository.existsByUser_UserIdAndQuestion_QuestionId(userId, questionId);
+
+            if (!isSolved) {
+                throw new CustomException(ErrorCode.QUESTION_BOOKMARK_FORBIDDEN);
+            }
+
+            questionBookmarkRepository.deleteByUser_UserIdAndQuestion_QuestionId(
+                userId,
+                questionId
+            );
+
+            return new QuestionBookmarkResponse(
+                questionId,
+                false
+            );
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(
+                "[QuestionBookmarkService] 문제 북마크 식제 실패 - userId={}, questionId={}",
+                userId,
+                questionId,
+                e
+            );
+
+            throw new CustomException(ErrorCode.QUESTION_BOOKMARK_SAVE_FAILED);
+        }
     }
 }
