@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TechCategoryRepository extends JpaRepository<TechCategory, Long>, TechCategoryRepositoryCustom {
-    
+
 }

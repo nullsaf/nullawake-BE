@@ -2,6 +2,7 @@ package com.nullsaf.nullawake.api.question.controller;
 
 import com.nullsaf.nullawake.api.auth.security.CustomUserDetails;
 import com.nullsaf.nullawake.api.question.dto.QuestionAnswerResponse;
+import com.nullsaf.nullawake.api.question.dto.QuestionBookmarkResponse;
 import com.nullsaf.nullawake.api.question.dto.QuestionResponse;
 import com.nullsaf.nullawake.api.question.dto.QuestionSubmitRequest;
 import com.nullsaf.nullawake.api.question.dto.QuestionSubmitResponse;
@@ -57,6 +58,36 @@ public class QuestionController {
         return ApiResponse.success(
                 "정답 조회에 성공했습니다.",
                 questionService.getAnswer(historyId, userDetails.getUserId())
+        );
+    }
+
+    @Operation(summary = "문제 북마크 추가")
+    @PostMapping("/{questionId}/bookmark")
+    public ApiResponse<QuestionBookmarkResponse> addBookmark(
+        @PathVariable Long questionId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        QuestionBookmarkResponse response = questionService.addBookmark(questionId, userId);
+        return ApiResponse.success(
+            "문제 북마크 추가에 성공했습니다.",
+            response
+        );
+    }
+
+    @Operation(summary = "문제 북마크 삭제")
+    @DeleteMapping("/{questionId}/bookmark")
+    public ApiResponse<QuestionBookmarkResponse> deleteBookmark(
+        @PathVariable Long questionId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+
+        QuestionBookmarkResponse response = questionService.deleteBookmark(questionId, userId);
+        return ApiResponse.success(
+            "문제 북마크 삭제에 성공했습니다.",
+            response
         );
     }
 }

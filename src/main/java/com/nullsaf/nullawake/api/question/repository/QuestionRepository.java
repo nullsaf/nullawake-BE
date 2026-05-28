@@ -14,4 +14,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     default Optional<Question> findByIdWithTechStack(Long questionId) {
         return findByQuestionId(questionId);
     }
+
+    // 문제가 존재하고, 활성화 상태인지 확인
+    Optional<Question> findByQuestionIdAndDevActiveTrue(Long questionId);
 }
